@@ -1,17 +1,19 @@
-using System.Text.Json;
 using app.Scheduler;
 using app.Services;
+using slack;
 
 namespace app.Jobs;
 
 public class TestJob1 : CronJobService
 {
   private readonly ILogger<TestJob1> _logger;
+  private ISlack _slack;
 
-  public TestJob1(ISchedulerConfig<TestJob1> config, ILogger<TestJob1> logger) :
+  public TestJob1(ISchedulerConfig<TestJob1> config, ILogger<TestJob1> logger, ISlack slack) :
     base(config.CronExpression, config.TimeZoneInfo)
   {
     _logger = logger;
+    _slack = slack;
   }
 
   public override Task StartAsync(CancellationToken cancellationToken)
@@ -20,10 +22,10 @@ public class TestJob1 : CronJobService
     return base.StartAsync(cancellationToken);
   }
 
-  protected override Task Execute(CancellationToken cancellationToken)
+  protected override async Task<Task> Execute(CancellationToken cancellationToken)
   {
     _logger.LogInformation("{Now} Test job is running", DateTime.Now);
-    Console.WriteLine(JsonSerializer.Serialize(CountToTen()));
+    await _slack.Testing();
     return Task.CompletedTask;
   }
 
