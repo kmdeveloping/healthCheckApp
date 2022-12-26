@@ -1,6 +1,6 @@
-bin/
-obj/
-/packages/
+*/bin/
+*/obj/
+*/packages/
 riderModule.iml
 /_ReSharper.Caches/
 
@@ -10,4 +10,5 @@ riderModule.iml
 */appsettings.Development.json
 */appsettings.Local.json
 */appsettings.Production.json
+
 
