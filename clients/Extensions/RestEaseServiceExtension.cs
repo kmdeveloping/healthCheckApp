@@ -21,8 +21,10 @@ public static class RestEaseServiceExtension
 
     services
       .AddSingleton<IRestEaseClientConfiguration<TInterface>>(clientConfiguration)
-      //.Decorate(typeof(TInterface), typeof(TClass))
       .AddRestEaseClient<TInterface>(clientConfiguration.ClientUri);
+      
+    // todo this causes error Cant find IRestEaseClientConfiguration   
+    //services.Decorate(typeof(TInterface), typeof(TClass)); 
 
     return services;
   }
