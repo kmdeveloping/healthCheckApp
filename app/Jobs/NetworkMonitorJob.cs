@@ -31,9 +31,28 @@ public class NetworkMonitorJob : CronJobService
   public override async Task Execute(CancellationToken cancellationToken)
   {
     _logger.LogInformation("Network Scan running {Time}", DateTime.Now);
-    
-    if ((await _client.GetNetworkStatus(cancellationToken)).StatusCode == HttpStatusCode.OK)
-      await _slack.SendAsync(SlackMessageEnum.NetworkStatusRestored, "Network Up");
+
+    try
+    {
+      // todo add getPreviousStatusFromRedis method for the networkRestored state
+      bool networkWasPreviouslyInErrorState = true;
+
+      var status = await _client.GetNetworkStatus(cancellationToken);
+
+      if (networkWasPreviouslyInErrorState)
+      {
+        await _slack.SendAsync(SlackMessageEnum.NetworkStatusRestored, "Previous Error State Cleared");
+      }
+      
+      // todo add database update with current state 
+      var statusType = status.StatusCode.ToString();
+      Console.WriteLine(statusType);
+    }
+    catch (Exception ex)
+    {
+      // todo add exception for Redis Client Error and HttpResponse error since they are different messages
+      await _slack.SendAsync(SlackMessageEnum.NetworkStatusError, ex.Message); 
+    }
   }
 
   public override Task StopAsync(CancellationToken cancellationToken)
