@@ -22,7 +22,7 @@ public class TestJob1 : CronJobService
     return base.StartAsync(cancellationToken);
   }
 
-  protected override async Task Execute(CancellationToken cancellationToken)
+  public override async Task Execute(CancellationToken cancellationToken)
   {
     _logger.LogInformation("{Now} Test job is running", DateTime.Now);
     await _slack.Testing();

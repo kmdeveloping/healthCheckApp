@@ -66,7 +66,7 @@ public abstract class CronJobService : IHostedService, IDisposable
     _timer?.Dispose();
   }
 
-  protected virtual async Task Execute(CancellationToken cancellationToken)
+  public virtual async Task Execute(CancellationToken cancellationToken)
   {
     await Task.Delay(5000, cancellationToken);
   }
