@@ -8,11 +8,11 @@ public static class ClientExtension
   {
     if (services is null) throw new ArgumentNullException(nameof(services));
     
-    services.AddRestEaseServices<INetworkScanningClient>(opt =>
+    services.AddRestEaseServices<INetworkScanningClient, NetworkScanningClient>(opt =>
     {
       opt.ClientUri = "https://kmcloud.co";
     });
-    
+
     return services;
   }
 }

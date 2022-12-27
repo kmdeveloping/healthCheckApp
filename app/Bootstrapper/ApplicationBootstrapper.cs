@@ -1,4 +1,5 @@
 using app.Jobs.Extensions;
+using clients;
 using clients.Extensions;
 
 namespace app.Bootstrapper;
