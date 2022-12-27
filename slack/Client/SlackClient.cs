@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using slack.Config;
 using Slack.Webhooks;
 
@@ -14,14 +13,14 @@ public class Slack : ISlack
   private List<SlackField> _slackFieldsList;
   private static string _emoji, _msgColor, webook;
 
-  public Slack(IOptions<SlackConfiguration> config, ILogger<SlackClient> logger)
+  public Slack(SlackConfiguration slackConfiguration, ILogger<SlackClient> logger)
   {
     _logger = logger;
-    _slackClient = new SlackClient(config.Value.WebhookUrl);
+    _slackClient = new SlackClient(slackConfiguration.WebhookUrl);
     _slackMessage = new SlackMessage();
     _slackAttachmentList = new List<SlackAttachment>();
     _slackFieldsList = new List<SlackField>();
-    webook = config.Value.WebhookUrl;
+    webook = slackConfiguration.WebhookUrl; 
   }
 
   public async Task Testing()

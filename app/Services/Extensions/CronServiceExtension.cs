@@ -1,4 +1,4 @@
-using app.Scheduler;
+using app.Services.Scheduler;
 
 namespace app.Services.Extensions;
 

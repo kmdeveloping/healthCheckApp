@@ -1,5 +1,5 @@
-using app.Scheduler;
 using app.Services;
+using app.Services.Scheduler;
 using slack;
 
 namespace app.Jobs;

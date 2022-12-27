@@ -1,4 +1,4 @@
-namespace app.Scheduler;
+namespace app.Services.Scheduler;
 
 public class SchedulerConfig<T> : ISchedulerConfig<T>
 {
