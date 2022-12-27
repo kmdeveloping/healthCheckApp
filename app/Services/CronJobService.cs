@@ -1,8 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Cronos;
-using Microsoft.Extensions.Hosting;
 using Timer = System.Timers.Timer;
 
 namespace app.Services;
@@ -19,7 +15,7 @@ public abstract class CronJobService : IHostedService, IDisposable
     _timeZoneInfo = timeZoneInfo;
   }
 
-  protected virtual async Task ScheduleJob(CancellationToken cancellationToken)
+  private async Task ScheduleJob(CancellationToken cancellationToken)
   {
     DateTimeOffset? nextJob = _expression.GetNextOccurrence(DateTimeOffset.Now, _timeZoneInfo);
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace app.Scheduler;
 
 public class SchedulerConfig<T> : ISchedulerConfig<T>

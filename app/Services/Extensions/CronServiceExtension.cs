@@ -1,6 +1,4 @@
-using System;
 using app.Scheduler;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace app.Services.Extensions;
 

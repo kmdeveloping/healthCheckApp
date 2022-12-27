@@ -1,9 +1,5 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using app.Scheduler;
 using app.Services;
-using Microsoft.Extensions.Logging;
 using slack;
 
 namespace app.Jobs;
@@ -26,11 +22,10 @@ public class TestJob1 : CronJobService
     return base.StartAsync(cancellationToken);
   }
 
-  protected override async Task<Task> Execute(CancellationToken cancellationToken)
+  protected override async Task Execute(CancellationToken cancellationToken)
   {
     _logger.LogInformation("{Now} Test job is running", DateTime.Now);
     await _slack.Testing();
-    return Task.CompletedTask;
   }
 
   public override Task StopAsync(CancellationToken cancellationToken)

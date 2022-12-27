@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace slack;
+﻿namespace slack;
 
 public interface ISlack
 {
