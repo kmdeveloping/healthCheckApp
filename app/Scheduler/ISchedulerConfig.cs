@@ -1,3 +1,5 @@
+using System;
+
 namespace app.Scheduler;
 
 public interface ISchedulerConfig<T>
