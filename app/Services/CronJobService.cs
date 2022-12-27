@@ -11,7 +11,7 @@ public abstract class CronJobService : IHostedService, IDisposable
 
   protected CronJobService(string cronExpression, TimeZoneInfo timeZoneInfo)
   {
-    _expression = CronExpression.Parse(cronExpression);
+    _expression = CronExpression.Parse(cronExpression, CronFormat.IncludeSeconds);
     _timeZoneInfo = timeZoneInfo;
   }
 
