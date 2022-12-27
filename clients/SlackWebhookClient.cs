@@ -2,6 +2,7 @@ using clients.Configuration;
 using clients.Models;
 using Microsoft.Extensions.Logging;
 using Slack.Webhooks;
+using Exception = System.Exception;
 
 namespace clients;
 
@@ -35,7 +36,16 @@ public class SlackWebhookClient : ISlackWebhookClient
     
     await CreateFields(messageType, message);
     await CreateAttachment(messageType);
-    await _slackClient.PostAsync(_slackMessage);
+
+    try
+    {
+      bool sentMessage = await _slackClient.PostAsync(_slackMessage);
+      _logger.LogInformation("{SentMessage}", sentMessage);
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError("ERROR: {ErrorMessage}", ex.Message);
+    }
   }
 
   private async Task CreateAttachment(SlackMessageEnum messageType)
