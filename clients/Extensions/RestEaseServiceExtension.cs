@@ -8,7 +8,7 @@ namespace clients.Extensions;
 public static class RestEaseServiceExtension
 {
   public static IServiceCollection AddRestEaseServices<TInterface, TClass>(this IServiceCollection services, Action<IRestEaseClientConfiguration<TInterface>> options) 
-    where TInterface : class, IRestEaseService where TClass : TInterface
+    where TInterface : class, IRestEaseService where TClass : RestEaseService, TInterface
   {
     if (options is null)
       throw new ArgumentNullException(nameof(options), @"Please provide client uri configurations.");
@@ -19,10 +19,11 @@ public static class RestEaseServiceExtension
     if (string.IsNullOrWhiteSpace(clientConfiguration.ClientUri))
       throw new ArgumentNullException(nameof(RestEaseClientConfiguration<TInterface>.ClientUri), @"Client uri required for setup");
 
-    services.AddSingleton<IRestEaseClientConfiguration<TInterface>>(clientConfiguration);
-    services.AddRestEaseClient<TInterface>(clientConfiguration.ClientUri);
-    //services.Decorate<TInterface, TClass>(); //todo this causes dependency injection invalid operation exceptions
-    
+    services
+      .AddSingleton<IRestEaseClientConfiguration<TInterface>>(clientConfiguration)
+      //.Decorate(typeof(TInterface), typeof(TClass))
+      .AddRestEaseClient<TInterface>(clientConfiguration.ClientUri);
+
     return services;
   }
 }

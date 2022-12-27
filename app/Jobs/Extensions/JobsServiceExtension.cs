@@ -10,7 +10,7 @@ public static class JobsServiceExtension
 
     services.AddCronJob<NetworkMonitorJob>(opt =>
     {
-      opt.CronExpression = @"*/15 * * * *";
+      opt.CronExpression = @"* * * * *";
       opt.TimeZoneInfo = TimeZoneInfo.Local;
     });
 

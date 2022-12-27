@@ -9,8 +9,8 @@ public class NetworkMonitorJob : CronJobService
   private readonly ILogger<NetworkMonitorJob> _logger;
   private readonly INetworkScanningClient _client;
 
-  public NetworkMonitorJob(ISchedulerConfiguration<NetworkMonitorJob> configuration, 
-    ILogger<NetworkMonitorJob> logger, INetworkScanningClient client) : base(configuration.CronExpression, configuration.TimeZoneInfo)
+  public NetworkMonitorJob(ISchedulerConfiguration<NetworkMonitorJob> configuration, ILogger<NetworkMonitorJob> logger, INetworkScanningClient client) :
+    base(configuration.CronExpression, configuration.TimeZoneInfo)
   {
     _logger = logger;
     _client = client;

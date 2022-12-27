@@ -20,7 +20,7 @@ public class NetworkScanningClient : RestEaseService, INetworkScanningClient
   private readonly ILogger<NetworkScanningClient> _logger;
   private readonly INetworkScanningClient _decorator;
 
-  public NetworkScanningClient(IRestEaseClientConfiguration<NetworkScanningClient> clientConfiguration, INetworkScanningClient decorator, ILogger<NetworkScanningClient> logger) : 
+  public NetworkScanningClient(INetworkScanningClient decorator, IRestEaseClientConfiguration<NetworkScanningClient> clientConfiguration, ILogger<NetworkScanningClient> logger) : 
     base(clientConfiguration.ClientUri, clientConfiguration.AccessToken)
   {
     _logger = logger;
