@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "app\app.csproj", "{E319AD38-EB1F-47C6-9BE9-984141E8B96E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "slack", "slack\slack.csproj", "{54920879-9DB9-4EA8-81B4-E339CA3BCE9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "clients", "clients\clients.csproj", "{38B7B486-F731-42DA-8DF6-68A9254021C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +14,9 @@ Global
 		{E319AD38-EB1F-47C6-9BE9-984141E8B96E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E319AD38-EB1F-47C6-9BE9-984141E8B96E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E319AD38-EB1F-47C6-9BE9-984141E8B96E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54920879-9DB9-4EA8-81B4-E339CA3BCE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54920879-9DB9-4EA8-81B4-E339CA3BCE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54920879-9DB9-4EA8-81B4-E339CA3BCE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54920879-9DB9-4EA8-81B4-E339CA3BCE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B7B486-F731-42DA-8DF6-68A9254021C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B7B486-F731-42DA-8DF6-68A9254021C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B7B486-F731-42DA-8DF6-68A9254021C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B7B486-F731-42DA-8DF6-68A9254021C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

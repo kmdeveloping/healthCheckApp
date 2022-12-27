@@ -5,13 +5,13 @@ namespace app.Services;
 
 public abstract class CronJobService : IHostedService, IDisposable
 {
-  private Timer? _timer;
+  private Timer _timer;
   private readonly CronExpression _expression;
   private readonly TimeZoneInfo _timeZoneInfo;
 
   protected CronJobService(string cronExpression, TimeZoneInfo timeZoneInfo)
   {
-    _expression = CronExpression.Parse(cronExpression, CronFormat.IncludeSeconds);
+    _expression = CronExpression.Parse(cronExpression);
     _timeZoneInfo = timeZoneInfo;
   }
 
@@ -57,13 +57,13 @@ public abstract class CronJobService : IHostedService, IDisposable
 
   public virtual async Task StopAsync(CancellationToken cancellationToken)
   {
-    _timer.Stop();
+    _timer?.Stop();
     await Task.CompletedTask;
   }
 
   public virtual void Dispose()
   {
-    _timer.Dispose();
+    _timer?.Dispose();
   }
 
   public virtual async Task Execute(CancellationToken cancellationToken)

@@ -12,11 +12,4 @@
       <PackageReference Include="Slack.Webhooks" Version="1.1.5" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="obj\Debug\net6.0\slack.csproj.CoreCompileInputs.cache" />
-      <Content Include="obj\Debug\net6.0\slack.csproj.FileListAbsolute.txt" />
-      <Content Include="obj\Debug\net6.0\slack.dll" />
-      <Content Include="obj\Debug\net6.0\slack.pdb" />
-    </ItemGroup>
-
 </Project>

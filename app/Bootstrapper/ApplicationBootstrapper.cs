@@ -1,5 +1,5 @@
 using app.Jobs.Extensions;
-using slack.Extensions;
+using clients.Extensions;
 
 namespace app.Bootstrapper;
 
@@ -16,6 +16,7 @@ public static class ApplicationBootstrapper
       opt.WebhookUrl = configuration["SlackConfiguration:WebhookUrl"];
     });
 
+    services.AddRestEaseClients();
     services.AddScheduledJobs();
 
     return builder.Build();
