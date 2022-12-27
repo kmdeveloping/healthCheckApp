@@ -1,4 +1,5 @@
 using clients.Configuration;
+using clients.Models;
 using Microsoft.Extensions.Logging;
 using Slack.Webhooks;
 
@@ -6,17 +7,17 @@ namespace clients;
 
 public interface ISlackWebhookClient
 {
-  Task Testing();
+  Task SendAsync(SlackMessageEnum messageType, string message);
 }
 
 public class SlackWebhookClient : ISlackWebhookClient
 {
   private readonly ILogger<SlackWebhookClient> _logger;
   private readonly SlackClient _slackClient;
-  private readonly SlackMessage _slackMessage;
-  private readonly List<SlackAttachment> _slackAttachmentList;
+  
+  private SlackMessage _slackMessage;
+  private List<SlackAttachment> _slackAttachmentList;
   private List<SlackField> _slackFieldsList;
-  private string _webook;
   private string _emoji;
   private string _msgColor;
 
@@ -24,17 +25,98 @@ public class SlackWebhookClient : ISlackWebhookClient
   {
     _logger = logger;
     _slackClient = new SlackClient(slackClientConfiguration.WebhookUrl);
+  }
+  
+  public async Task SendAsync(SlackMessageEnum messageType, string message)
+  {
     _slackMessage = new SlackMessage();
     _slackAttachmentList = new List<SlackAttachment>();
     _slackFieldsList = new List<SlackField>();
     
-    _webook = slackClientConfiguration.WebhookUrl; 
+    await CreateFields(messageType, message);
+    await CreateAttachment(messageType);
+    await _slackClient.PostAsync(_slackMessage);
   }
-  
-  public Task Testing()
+
+  private async Task CreateAttachment(SlackMessageEnum messageType)
   {
-    _logger.LogInformation("Slack method called {Method}", nameof(Testing));
-    Console.WriteLine($"Slack Testing Implemented with webhook {_webook}");
+    await EmojiAndColorMapper(messageType);
+
+    SlackAttachment slackAttachment = new SlackAttachment
+    {
+      Title = $"{_emoji} Network Scan Notice",
+      Color = _msgColor,
+      Fields = _slackFieldsList
+    };
+    
+    _slackAttachmentList.Add(slackAttachment);
+
+    _slackMessage.Attachments = _slackAttachmentList;
+  }
+
+  private Task CreateFields(SlackMessageEnum messageType, string message)
+  {
+    SlackField titleField = new SlackField
+    {
+      Short = false
+    };
+
+    SlackField messageField = new SlackField
+    {
+      Title = "Message: ",
+      Short = true
+    };
+
+    SlackField networkStateField = new SlackField
+    {
+      Title = "State: ",
+      Short = true
+    };
+
+    switch (messageType)
+    {
+      case SlackMessageEnum.RedisClientError:
+        titleField.Title = "Error on redis client";
+        messageField.Value = message;
+        networkStateField.Value = "Unknown";
+        break;
+      case SlackMessageEnum.NetworkStatusError:
+        titleField.Title = "Network status error";
+        messageField.Value = message;
+        networkStateField.Value = "Down";
+        break;
+      case SlackMessageEnum.NetworkStatusRestored:
+        titleField.Title = "Network restored";
+        messageField.Value = message;
+        networkStateField.Value = "Up";
+        break;
+    }
+
+    _slackFieldsList.Add(titleField);
+    _slackFieldsList.Add(messageField);
+    _slackFieldsList.Add(networkStateField);
+    
+    return Task.CompletedTask;
+  }
+
+  private Task EmojiAndColorMapper(SlackMessageEnum messageType)
+  {
+    _emoji = messageType switch
+    {
+      SlackMessageEnum.NetworkStatusError => ":alert:",
+      SlackMessageEnum.RedisClientError => ":alert:",
+      SlackMessageEnum.NetworkStatusRestored => ":boom:",
+      _ => ":alert:"
+    };
+
+    _msgColor = messageType switch
+    {
+      SlackMessageEnum.NetworkStatusError => "#Ffa500",
+      SlackMessageEnum.RedisClientError => "#FF0000",
+      SlackMessageEnum.NetworkStatusRestored => "#33effc",
+      _ => "#33effc"
+    };
+    
     return Task.CompletedTask;
   }
 }

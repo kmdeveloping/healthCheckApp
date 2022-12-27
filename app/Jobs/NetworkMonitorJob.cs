@@ -1,18 +1,24 @@
+using System.Net;
 using app.Services;
 using app.Services.Scheduler;
 using clients;
+using clients.Models;
 
 namespace app.Jobs;
 
 public class NetworkMonitorJob : CronJobService
 {
   private readonly ILogger<NetworkMonitorJob> _logger;
+  private readonly ISlackWebhookClient _slack;
   private readonly INetworkScanningClient _client;
 
-  public NetworkMonitorJob(ISchedulerConfiguration<NetworkMonitorJob> configuration, ILogger<NetworkMonitorJob> logger, INetworkScanningClient client) :
-    base(configuration.CronExpression, configuration.TimeZoneInfo)
+  public NetworkMonitorJob(ISchedulerConfiguration<NetworkMonitorJob> configuration, 
+    ILogger<NetworkMonitorJob> logger, 
+    ISlackWebhookClient slack, 
+    INetworkScanningClient client) : base(configuration.CronExpression, configuration.TimeZoneInfo)
   {
     _logger = logger;
+    _slack = slack;
     _client = client;
   }
   
@@ -26,10 +32,8 @@ public class NetworkMonitorJob : CronJobService
   {
     _logger.LogInformation("Network Scan running {Time}", DateTime.Now);
     
-    var status = await _client.GetNetworkStatus(cancellationToken);
-
-    // todo add logic methods for non 200 status code handling and for network restored handling
-    _logger.LogInformation("Status: {Status}",status.StatusCode.ToString());
+    if ((await _client.GetNetworkStatus(cancellationToken)).StatusCode == HttpStatusCode.OK)
+      await _slack.SendAsync(SlackMessageEnum.NetworkStatusRestored, "Network Up");
   }
 
   public override Task StopAsync(CancellationToken cancellationToken)
