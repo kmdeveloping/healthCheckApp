@@ -17,7 +17,6 @@ public class SlackWebhookClient : ISlackWebhookClient
   private readonly SlackClient _slackClient;
   
   private SlackMessage _slackMessage;
-  private List<SlackAttachment> _slackAttachmentList;
   private List<SlackField> _slackFieldsList;
   private string _emoji;
   private string _msgColor;
@@ -31,7 +30,6 @@ public class SlackWebhookClient : ISlackWebhookClient
   public async Task SendAsync(SlackMessageEnum messageType, string message)
   {
     _slackMessage = new SlackMessage();
-    _slackAttachmentList = new List<SlackAttachment>();
     _slackFieldsList = new List<SlackField>();
     
     await CreateFields(messageType, message);
@@ -50,17 +48,16 @@ public class SlackWebhookClient : ISlackWebhookClient
   private async Task CreateAttachment(SlackMessageEnum messageType)
   {
     await EmojiAndColorMapper(messageType);
-
-    SlackAttachment slackAttachment = new SlackAttachment
-    {
-      Title = $"{_emoji} Network Scan Notice",
-      Color = _msgColor,
-      Fields = _slackFieldsList
-    };
     
-    _slackAttachmentList.Add(slackAttachment);
-
-    _slackMessage.Attachments = _slackAttachmentList;
+    _slackMessage.Attachments= new List<SlackAttachment>
+    {
+      new SlackAttachment
+      {
+        Title = $"{_emoji} Network Scan Notice",
+        Color = _msgColor,
+        Fields = _slackFieldsList
+      }
+    };
   }
 
   private Task CreateFields(SlackMessageEnum messageType, string message)
