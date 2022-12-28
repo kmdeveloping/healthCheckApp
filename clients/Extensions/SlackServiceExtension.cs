@@ -12,12 +12,9 @@ public static class SlackServiceExtension
     if (services is null) throw new ArgumentNullException(nameof(services));
     if (options is null) throw new ArgumentNullException(nameof(options));
 
-    services
-      .Configure(options)
-      .AddSingleton(sp => 
-        sp.GetRequiredService<IOptions<SlackClientConfiguration>>().Value);
-
-    services.AddTransient<ISlackWebhookClient, SlackWebhookClient>();
+    services.Configure(options)
+      .AddSingleton(sp => sp.GetRequiredService<IOptions<SlackClientConfiguration>>().Value)
+      .AddTransient<ISlackWebhookClient, SlackWebhookClient>();
 
     return services;
   }
