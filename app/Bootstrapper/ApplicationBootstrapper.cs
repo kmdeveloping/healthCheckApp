@@ -9,8 +9,8 @@ public static class ApplicationBootstrapper
 {
   public static WebApplication BuildServices(this WebApplicationBuilder builder)
   {
-    var services = builder.Services;
-    var configuration = builder.Configuration;
+    IServiceCollection services = builder.Services;
+    ConfigurationManager configuration = builder.Configuration;
     
     services.AddSlackService(opt =>
     {
