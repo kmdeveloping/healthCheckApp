@@ -39,8 +39,7 @@ public class SlackWebhookClient : ISlackWebhookClient
 
     try
     {
-      bool sentMessage = await _slackClient.PostAsync(_slackMessage);
-      _logger.LogInformation("{SentMessage}", sentMessage);
+      await _slackClient.PostAsync(_slackMessage);
     }
     catch (Exception ex)
     {
