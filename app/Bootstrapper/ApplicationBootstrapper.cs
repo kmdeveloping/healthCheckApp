@@ -1,5 +1,6 @@
 using app.Jobs;
 using app.Services.Extensions;
+using Serilog;
 using clients;
 using clients.Extensions;
 
@@ -11,6 +12,9 @@ public static class ApplicationBootstrapper
   {
     IServiceCollection services = builder.Services;
     ConfigurationManager configuration = builder.Configuration;
+
+    builder.Host.UseSerilog((cfg, lc) =>
+      lc.ReadFrom.Configuration(cfg.Configuration).WriteTo.Console());
     
     services.AddSlackService(opt =>
     {

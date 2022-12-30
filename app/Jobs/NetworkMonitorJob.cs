@@ -1,9 +1,11 @@
 using System.Net;
 using app.Services;
+using app.Services.Exceptions;
 using app.Services.Scheduler;
 using clients;
 using clients.Models;
 using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace app.Jobs;
 
@@ -41,14 +43,15 @@ public class NetworkMonitorJob : CronJobService
     {
       HttpStatusCode status = (await _client.GetNetworkStatus(cancellationToken)).StatusCode;
 
-      if (await CheckNetworkForPreviousErrorOrEmptyState(status))
+      if (await CheckNetworkForPreviousErrorState(status))
       {
         await _slack.SendAsync(SlackMessageEnum.NetworkStatusRestored, "Previous Error State Cleared");
         await _cache.SetCacheRecordAsync(RedisKey, status);
       }
       else if (CheckUnknownNetworkStates(status))
       {
-        await _slack.SendAsync(SlackMessageEnum.NetworkStatusError, $"Unexpected response from scan {status.ToString()}");
+        await _slack.SendAsync(SlackMessageEnum.NetworkStatusError,
+          $"Unexpected response from scan {status.ToString()}");
         await _cache.SetCacheRecordAsync(RedisKey, status);
       }
       else
@@ -62,17 +65,35 @@ public class NetworkMonitorJob : CronJobService
       // only send one notification to slack
       if (await _cache.GetCacheRecordAsync<HttpStatusCode>(RedisKey) != ex.StatusCode)
       {
-        await _slack.SendAsync(SlackMessageEnum.NetworkStatusError, ex.Message); 
-        await _cache.SetCacheRecordAsync(RedisKey, ex.StatusCode);
+        await _slack.SendAsync(SlackMessageEnum.NetworkStatusError, ex.Message);
+        
+        if (ex.StatusCode is null)
+          await _cache.SetCacheRecordAsync(RedisKey, HttpStatusCode.InternalServerError);
+        else
+          await _cache.SetCacheRecordAsync(RedisKey, ex.StatusCode);
       }
       else
       {
-        await _cache.SetCacheRecordAsync(RedisKey, ex.StatusCode); 
+        await _cache.SetCacheRecordAsync(RedisKey, ex.StatusCode);
       }
     }
     catch (Exception ex)
     {
-      await _slack.SendAsync(SlackMessageEnum.RedisClientError, ex.Message);
+      switch (ex)
+      {
+        case DataCacheNotFoundException:
+          _logger.LogInformation("Message: {ExceptionMessage}, Setting cache initial value {DateTime}", ex.Message,
+            DateTime.Now);
+          await _cache.SetCacheRecordAsync(RedisKey, HttpStatusCode.OK);
+          break;
+        case RedisConnectionException:
+        case RedisTimeoutException:
+          await _slack.SendAsync(SlackMessageEnum.RedisClientError, ex.Message);
+          break;
+        default:
+          await _slack.SendAsync(SlackMessageEnum.UnknownError, ex.Message);
+          break;
+      }
     }
   }
 
@@ -82,13 +103,13 @@ public class NetworkMonitorJob : CronJobService
     return base.StopAsync(cancellationToken);
   }
 
-  private async Task<bool> CheckNetworkForPreviousErrorOrEmptyState(HttpStatusCode currentStatusCode)
+  private async Task<bool> CheckNetworkForPreviousErrorState(HttpStatusCode currentStatusCode)
   {
     HttpStatusCode? record = await _cache.GetCacheRecordAsync<HttpStatusCode>(RedisKey);
 
-    _logger.LogInformation("Cache data: {Record}", record.ToString());
+    _logger.LogInformation("Previous cached data: {Record}", record.ToString());
 
-    return record != HttpStatusCode.OK && currentStatusCode == HttpStatusCode.OK;
+    return record != HttpStatusCode.OK && record != 0 && currentStatusCode == HttpStatusCode.OK;
   }
 
   private bool CheckUnknownNetworkStates(HttpStatusCode currentStatusCode)

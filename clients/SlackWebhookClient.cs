@@ -96,6 +96,11 @@ public class SlackWebhookClient : ISlackWebhookClient
         messageField.Value = message;
         networkStateField.Value = "Up";
         break;
+      case SlackMessageEnum.UnknownError:
+        titleField.Title = "Unexpected Error";
+        messageField.Value = message;
+        networkStateField.Value = "Unknown";
+        break;
     }
 
     _slackFieldsList.Add(titleField);
@@ -120,7 +125,7 @@ public class SlackWebhookClient : ISlackWebhookClient
       SlackMessageEnum.NetworkStatusError => "#Ffa500",
       SlackMessageEnum.RedisClientError => "#FF0000",
       SlackMessageEnum.NetworkStatusRestored => "#33effc",
-      _ => "#33effc"
+      _ => "#FF0000"
     };
     
     return Task.CompletedTask;
