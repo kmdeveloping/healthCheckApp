@@ -13,8 +13,8 @@ public static class ApplicationBootstrapper
     IServiceCollection services = builder.Services;
     ConfigurationManager configuration = builder.Configuration;
 
-    builder.Host.UseSerilog((cfg, lc) =>
-      lc.ReadFrom.Configuration(cfg.Configuration).WriteTo.Console());
+    builder.Host.UseSerilog((ctx, lc) =>
+      lc.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console());
     
     services.AddSlackService(opt =>
     {
