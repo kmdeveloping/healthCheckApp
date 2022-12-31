@@ -5,6 +5,7 @@ using app.Services.Scheduler;
 using clients;
 using clients.Models;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
 
 namespace app.Jobs;
@@ -15,18 +16,21 @@ public class NetworkMonitorJob : CronJobService
   private readonly ISlackWebhookClient _slack;
   private readonly INetworkScanningClient _client;
   private readonly IDistributedCache _cache;
+  private readonly IMemoryCache _memoryCache;
   private const string RedisKey = "net_state";
 
   public NetworkMonitorJob(ISchedulerConfiguration<NetworkMonitorJob> configuration, 
     ILogger<NetworkMonitorJob> logger, 
     ISlackWebhookClient slack, 
     INetworkScanningClient client,
-    IDistributedCache cache) : base(configuration.CronExpression, configuration.TimeZoneInfo)
+    IDistributedCache cache,
+    IMemoryCache memoryCache) : base(configuration.CronExpression, configuration.TimeZoneInfo)
   {
     _logger = logger;
     _slack = slack;
     _client = client;
     _cache = cache;
+    _memoryCache = memoryCache;
   }
   
   public override Task StartAsync(CancellationToken cancellationToken)
@@ -35,7 +39,7 @@ public class NetworkMonitorJob : CronJobService
     return base.StartAsync(cancellationToken);
   }
 
-  protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+  public override async Task ExecuteAsync(CancellationToken cancellationToken)
   {
     _logger.LogInformation("{JobName} started at {Time}", nameof(NetworkMonitorJob), DateTime.Now);
 
