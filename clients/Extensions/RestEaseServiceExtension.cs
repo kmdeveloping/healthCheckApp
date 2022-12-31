@@ -16,7 +16,7 @@ public static class RestEaseServiceExtension
     options.Invoke(config);
     
     services.AddRestEaseClient<TInterface>(config.ClientUri);
-    services.Decorate<TInterface, TClass>();
+    services.Decorate(typeof(TInterface), typeof(TClass));
 
     return services;
   }

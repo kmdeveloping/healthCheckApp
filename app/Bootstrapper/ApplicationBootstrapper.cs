@@ -4,6 +4,7 @@ using app.Services.Extensions;
 using clients;
 using Serilog;
 using clients.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace app.Bootstrapper;
 

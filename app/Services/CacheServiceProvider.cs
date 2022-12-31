@@ -10,7 +10,7 @@ namespace app.Services;
 public static class CacheServiceProvider
 {
   private static readonly ILogger Logger = Log.ForContext(typeof(CacheServiceProvider));
-  
+
   public static async Task<T?> GetCacheRecordAsync<T>(this IDistributedCache cache, string recordId)
   {
     try
@@ -60,5 +60,4 @@ public static class CacheServiceProvider
       }
     }
   }
-
 }

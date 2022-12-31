@@ -31,7 +31,6 @@ public class NetworkScanningClient : INetworkScanningClient
     try
     {
       var response = await _decorator.GetNetworkStatus(cancellationToken);
-      _logger.LogDebug("Response: {Response}", JsonSerializer.Serialize(response));
       return response;
     }
     catch (Exception ex)
