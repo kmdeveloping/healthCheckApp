@@ -1,5 +1,4 @@
 using clients.Configuration;
-using clients.Services;
 using Microsoft.Extensions.DependencyInjection;
 using RestEase.HttpClientFactory;
 
@@ -7,24 +6,17 @@ namespace clients.Extensions;
 
 public static class RestEaseServiceExtension
 {
-  public static IServiceCollection AddRestEaseServices<TInterface, TClass>(this IServiceCollection services, Action<IRestEaseClientConfiguration<TInterface>> options) 
-    where TInterface : class, IRestEaseService where TClass : RestEaseService, TInterface
+  public static IServiceCollection AddRestEaseClientServices<TInterface, TClass>(this IServiceCollection services, Action<RestEaseClientConfiguration> options) 
+    where TInterface : class where TClass : TInterface
   {
-    if (options is null)
-      throw new ArgumentNullException(nameof(options), @"Please provide client uri configurations.");
+    if (services is null) throw new ArgumentNullException(nameof(services));
+    if (options is null) throw new ArgumentNullException(nameof(options));
 
-    RestEaseClientConfiguration<TInterface> clientConfiguration = new();
-    options.Invoke(clientConfiguration);
-
-    if (string.IsNullOrWhiteSpace(clientConfiguration.ClientUri))
-      throw new ArgumentNullException(nameof(RestEaseClientConfiguration<TInterface>.ClientUri), @"Client uri required for setup");
-
-    services
-      .AddSingleton<IRestEaseClientConfiguration<TInterface>>(clientConfiguration)
-      .AddRestEaseClient<TInterface>(clientConfiguration.ClientUri);
-      
-    // todo this causes error Cant find IRestEaseClientConfiguration   
-    //services.Decorate(typeof(TInterface), typeof(TClass)); 
+    RestEaseClientConfiguration config = new RestEaseClientConfiguration();
+    options.Invoke(config);
+    
+    services.AddRestEaseClient<TInterface>(config.ClientUri);
+    services.Decorate<TInterface, TClass>();
 
     return services;
   }

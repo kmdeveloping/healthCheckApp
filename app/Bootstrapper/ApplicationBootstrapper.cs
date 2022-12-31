@@ -1,7 +1,8 @@
 using app.Jobs;
+using app.Services;
 using app.Services.Extensions;
-using Serilog;
 using clients;
+using Serilog;
 using clients.Extensions;
 
 namespace app.Bootstrapper;
@@ -21,17 +22,15 @@ public static class ApplicationBootstrapper
       opt.WebhookUrl = configuration["SlackConfiguration:WebhookUrl"];
     });
 
+    services.AddRestEaseClientServices<INetworkScanningClient, NetworkScanningClient>(opt => 
+      opt.ClientUri = configuration["DefaultScanUrl"]);
+
     services.AddStackExchangeRedisCache(opt =>
     {
       opt.Configuration = configuration.GetConnectionString("RedisConnection");
       opt.InstanceName = "net_monitor_";
     });
-    
-    services.AddRestEaseServices<INetworkScanningClient, NetworkScanningClient>(opt =>
-    {
-      opt.ClientUri = configuration["DefaultScanUrl"];
-    });
-    
+
     services.AddCronJob<NetworkMonitorJob>(opt =>
     {
       opt.CronExpression = configuration["CronConfiguration:DefaultCron"];

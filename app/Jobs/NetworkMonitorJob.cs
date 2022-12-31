@@ -35,7 +35,7 @@ public class NetworkMonitorJob : CronJobService
     return base.StartAsync(cancellationToken);
   }
 
-  public override async Task Execute(CancellationToken cancellationToken)
+  protected override async Task ExecuteAsync(CancellationToken cancellationToken)
   {
     _logger.LogInformation("{JobName} started at {Time}", nameof(NetworkMonitorJob), DateTime.Now);
 

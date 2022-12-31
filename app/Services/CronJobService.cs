@@ -35,7 +35,7 @@ public abstract class CronJobService : IHostedService, IDisposable
 
         if (!cancellationToken.IsCancellationRequested)
         {
-          await Execute(cancellationToken);
+          await ExecuteAsync(cancellationToken);
         }
 
         if (!cancellationToken.IsCancellationRequested)
@@ -66,8 +66,8 @@ public abstract class CronJobService : IHostedService, IDisposable
     _timer?.Dispose();
   }
 
-  public virtual async Task Execute(CancellationToken cancellationToken)
+  protected virtual async Task ExecuteAsync(CancellationToken cancellationToken)
   {
-    await Task.Delay(5000, cancellationToken);
+    await Task.CompletedTask;
   }
 }

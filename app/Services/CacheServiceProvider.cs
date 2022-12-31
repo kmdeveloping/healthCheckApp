@@ -7,9 +7,9 @@ using ILogger = Serilog.ILogger;
 
 namespace app.Services;
 
-public static class DataCacheService
+public static class CacheServiceProvider
 {
-  private static readonly ILogger log = Log.ForContext(typeof(DataCacheService));
+  private static readonly ILogger Logger = Log.ForContext(typeof(CacheServiceProvider));
   
   public static async Task<T?> GetCacheRecordAsync<T>(this IDistributedCache cache, string recordId)
   {
@@ -25,10 +25,10 @@ public static class DataCacheService
       {
         case RedisTimeoutException:
         case RedisConnectionException:
-          log.Error("{Message}", ex.Message);
+          Logger.Error("{Message}", ex.Message);
           throw;
         default:
-          log.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(GetCacheRecordAsync));
+          Logger.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(GetCacheRecordAsync));
           throw;
       }
     }
@@ -52,10 +52,10 @@ public static class DataCacheService
       {
         case RedisTimeoutException:
         case RedisConnectionException:
-          log.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(SetCacheRecordAsync));
+          Logger.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(SetCacheRecordAsync));
           throw;
         default:
-          log.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(SetCacheRecordAsync));
+          Logger.Error(ex, "{DateTime} - Error in {Method}", DateTime.Now, nameof(SetCacheRecordAsync));
           break;
       }
     }

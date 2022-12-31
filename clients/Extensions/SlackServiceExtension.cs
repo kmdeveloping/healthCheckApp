@@ -1,7 +1,6 @@
 
 using clients.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace clients.Extensions;
 
@@ -12,9 +11,11 @@ public static class SlackServiceExtension
     if (services is null) throw new ArgumentNullException(nameof(services));
     if (options is null) throw new ArgumentNullException(nameof(options));
 
-    services.Configure(options)
-      .AddSingleton(sp => sp.GetRequiredService<IOptions<SlackClientConfiguration>>().Value)
-      .AddTransient<ISlackWebhookClient, SlackWebhookClient>();
+    SlackClientConfiguration config = new SlackClientConfiguration();
+    options.Invoke(config);
+    
+    services.AddSingleton(config);
+    services.AddTransient<ISlackWebhookClient, SlackWebhookClient>();
 
     return services;
   }
