@@ -6,16 +6,17 @@ namespace clients.Extensions;
 
 public static class SlackServiceExtension
 {
-  public static IServiceCollection AddSlackService(this IServiceCollection services, Action<SlackClientConfiguration> options)
+  public static IServiceCollection AddSlackClient<TI, TC>(this IServiceCollection services, Action<IClientConfiguration<TC>> options) 
+    where TI : class where TC : TI
   {
     if (services is null) throw new ArgumentNullException(nameof(services));
     if (options is null) throw new ArgumentNullException(nameof(options));
 
-    SlackClientConfiguration config = new SlackClientConfiguration();
+    ClientConfiguration<TC> config = new ();
     options.Invoke(config);
     
-    services.AddSingleton(config);
-    services.AddTransient<ISlackWebhookClient, SlackWebhookClient>();
+    services.AddSingleton<IClientConfiguration<TC>>(config);
+    services.AddTransient(typeof(TI), typeof(TC));
 
     return services;
   }

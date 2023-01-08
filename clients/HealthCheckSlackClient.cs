@@ -6,14 +6,14 @@ using Exception = System.Exception;
 
 namespace clients;
 
-public interface ISlackWebhookClient
+public interface IHealthCheckSlackClient
 {
   Task SendAsync(SlackMessageEnum messageType, string message);
 }
 
-public class SlackWebhookClient : ISlackWebhookClient
+public class HealthCheckSlackClient : IHealthCheckSlackClient
 {
-  private readonly ILogger<SlackWebhookClient> _logger;
+  private readonly ILogger<HealthCheckSlackClient> _logger;
   private readonly SlackClient _slackClient;
   
   private SlackMessage _slackMessage;
@@ -21,10 +21,10 @@ public class SlackWebhookClient : ISlackWebhookClient
   private string _emoji;
   private string _msgColor;
 
-  public SlackWebhookClient(SlackClientConfiguration slackClientConfiguration, ILogger<SlackWebhookClient> logger)
+  public HealthCheckSlackClient(IClientConfiguration<HealthCheckSlackClient> configuration, ILogger<HealthCheckSlackClient> logger)
   {
     _logger = logger;
-    _slackClient = new SlackClient(slackClientConfiguration.WebhookUrl);
+    _slackClient = new SlackClient(configuration.DestinationUri);
   }
   
   public async Task SendAsync(SlackMessageEnum messageType, string message)

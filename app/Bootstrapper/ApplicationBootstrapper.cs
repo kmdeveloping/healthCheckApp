@@ -1,10 +1,8 @@
 using app.Jobs;
-using app.Services;
 using app.Services.Extensions;
 using clients;
 using Serilog;
 using clients.Extensions;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace app.Bootstrapper;
 
@@ -17,14 +15,12 @@ public static class ApplicationBootstrapper
 
     builder.Host.UseSerilog((ctx, lc) =>
       lc.ReadFrom.Configuration(ctx.Configuration).WriteTo.Console());
-    
-    services.AddSlackService(opt =>
-    {
-      opt.WebhookUrl = configuration["SlackConfiguration:WebhookUrl"];
-    });
 
-    services.AddRestEaseClientServices<INetworkScanningClient, NetworkScanningClient>(opt => 
-      opt.ClientUri = configuration["DefaultScanUrl"]);
+    services.AddSlackClient<IHealthCheckSlackClient, HealthCheckSlackClient>(opt =>
+      opt.DestinationUri = configuration["SlackConfiguration:WebhookUrl"]);
+    
+    services.AddRestClient<INetworkScanningClient, NetworkScanningClient>(opt => 
+      opt.DestinationUri = configuration["DefaultScanUrl"]);
 
     services.AddStackExchangeRedisCache(opt =>
     {

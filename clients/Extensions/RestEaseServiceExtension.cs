@@ -6,16 +6,17 @@ namespace clients.Extensions;
 
 public static class RestEaseServiceExtension
 {
-  public static IServiceCollection AddRestEaseClientServices<TInterface, TClass>(this IServiceCollection services, Action<RestEaseClientConfiguration> options) 
+  public static IServiceCollection AddRestClient<TInterface, TClass>(this IServiceCollection services, Action<IClientConfiguration<TClass>> options) 
     where TInterface : class where TClass : TInterface
   {
     if (services is null) throw new ArgumentNullException(nameof(services));
     if (options is null) throw new ArgumentNullException(nameof(options));
 
-    RestEaseClientConfiguration config = new RestEaseClientConfiguration();
+    ClientConfiguration<TClass> config = new ();
     options.Invoke(config);
     
-    services.AddRestEaseClient<TInterface>(config.ClientUri);
+    services.AddSingleton<IClientConfiguration<TClass>>(config);
+    services.AddRestEaseClient<TInterface>(config.DestinationUri);
     services.Decorate(typeof(TInterface), typeof(TClass));
 
     return services;
